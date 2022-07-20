@@ -1,0 +1,289 @@
+﻿
+@{
+    ViewBag.Title = "Habitación";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<ol class="breadcrumb mb-4 mt-4">
+    <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Inicio</a></li>
+    <li class="breadcrumb-item active">Habitación</li>
+</ol>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="fas fa-table me-1"></i> Listado de Habitaciones
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-12">
+                <button class="btn btn-success" type="button" onclick="abrirModal(null)">Crear Nuevo</button>
+            </div>
+        </div>
+        <hr />
+        <table id="tabla" class="display responsive" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Número</th>
+                    <th>Detalle</th>
+                    <th>Precio</th>
+                    <th>Categoría</th>
+                    <th>Piso</th>
+                    <th>Estado</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+<h1 class="mt-4"></h1>
+
+<div class="modal fade" id="formModal" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="exampleModalLabel">Piso</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body g-2">
+                <input id="txtId" type="hidden" value="0" />
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-control">
+                            <label for="txtNumero">Número:</label>
+                            <input type="text" class="form-control" id="txtNumero" name="numero" autocomplete="off" required />
+
+                            <label for="txtDetalle">Detalle:</label>
+                            <input type="text" class="form-control" id="txtDetalle" name="detalle" autocomplete="off" required />
+
+                            <label for="txtPrecio">Precio:</label>
+                            <input type="text" class="form-control" id="txtPrecio" name="precio" autocomplete="off" required />
+
+                            <div class="col-sm-12">
+                                <label for="cboCategoria">Categoria:</label>
+                                <select class="form-select" id="cboCategoria"></select>
+                            </div>
+
+                            <div class="col-sm-12">
+                                <label for="cboPiso">Piso:</label>
+                                <select class="form-select" id="cboPiso"></select>
+                            </div>
+
+                            <div class="col-sm-12">
+                                <label for="cboEstado">Estado:</label>
+                                <select class="form-select" id="cboEstado">
+                                    <option value="1">Activo</option>
+                                    <option value="0">No Activo</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" onClick="Guardar()">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        var tablaData;
+        $(document).ready(function () {
+            jQuery.ajax({
+                url: '@Url.Action("ListarCategoria", "Mantenimiento")',
+                type: "GET",
+                data: null,
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $.each(data.data, function (index, value) {
+                        $("<option>").attr({ "value": value.Categoria_id }).text(value.Descripcion).appendTo("#cboCategoria");
+                    });
+                },
+                error: function (error) {
+                    console.log(error)
+                }
+            });
+
+             jQuery.ajax({
+                url: '@Url.Action("ListarPiso", "Mantenimiento")',
+                type: "GET",
+                data: null,
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $.each(data.data, function (index, value) {
+                        $("<option>").attr({ "value": value.Piso_id }).text(value.Descripcion).appendTo("#cboPiso");
+                    });
+                },
+                error: function (error) {
+                    console.log(error)
+                }
+             });
+
+            tablaData = $("#tabla").DataTable({
+                responsive: true,
+                ordering: false,
+                "ajax": {
+                    url: '@Url.Action("ListarHabitacion", "Mantenimiento")',
+                    type: "GET",
+                    dataType: "json"
+                },
+
+                "columns": [
+                    { "data": "Numero" },
+                    { "data": "Detalle" },
+                    { "data": "Precio" },
+                    {
+                        "data": "_categoria", render: function (data) {
+                            return data.Descripcion
+                        }
+                    },
+                    {
+                        "data": "_piso", render: function (data) {
+                            return data.Descripcion
+                        }
+                    },
+                    {
+                        "data": "Estado", "render": function (data) {
+                            if (data) {
+                                return '<span class="badge bg-success">Activo</span>'
+                            } else {
+                                return '<span class="badge bg-danger">No Activo</span>'
+                            }
+                        }
+                    },
+                    {
+                        "data": "Piso_id", "render": function (data, type, row, meta) {
+                            return $("<button>").addClass("btn btn-primary btn-editar btn-sm").append(
+                                $("<i>").addClass("fas fa-pen")
+                            ).attr({ "data-informacion": JSON.stringify(row) })[0].outerHTML
+                                +
+                                $("<button>").addClass("btn btn-danger btn-eliminar btn-sm ms-2").append(
+                                $("<i>").addClass("fas fa-trash")
+                                ).attr({ "data-informacion": JSON.stringify(row) })[0].outerHTML;
+                        },
+                        "orderable": false,
+                        "searchable": false,
+                        "width": "90px"
+                    }
+                ],
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.12.1/i18n/es-ES.json"
+                }
+            });
+        });
+
+        $(document).on('click', '.btn-editar', function (event) {
+            var json = $(this).data("informacion")
+
+            abrirModal(json)
+        });
+
+        function abrirModal(json) {
+            $("#txtId").val(0);
+            $("#txtNumero").val("");
+            $("#txtDetalle").val("");
+            $("#txtPrecio").val("");
+            $("#cboCategoria").val($("#cboCategoria option:first").val());
+            $("#cboPiso").val($("#cboPiso option:first").val());
+            $("#cboEstado").val(1);
+
+            if (json != null) {
+                $("#txtId").val(json.Habitacion_id);
+                $("#txtNumero").val(json.Numero);
+                $("#txtDetalle").val(json.Detalle);
+                $("#txtPrecio").val(json.Precio);
+                $("#cboCategoria").val(json._categoria.Categoria_id);
+                $("#cboPiso").val(json._piso.Piso_id);
+                $("#cboEstado").val(json.Estado == true ? 1 : 0);
+            }
+
+            $('#formModal').modal('show');
+        }
+
+        $(document).on('click', '.btn-eliminar', function (event) {
+            var json = $(this).data("informacion")
+
+            swal({
+                title: "¿Esta Seguro?",
+                text: "¿Desea eliminar la habitación?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn-primary",
+                confirmButtonText: "Si",
+                cancelButtonText: "No",
+                closeOnConfirm: false
+            },
+                function () {
+                        jQuery.ajax({
+                        url: '@Url.Action("EliminarHabitacion", "Mantenimiento")',
+                        type: "POST",
+                        data: JSON.stringify({ id: json.Habitacion_id}),
+                        dataType: "json",
+                        contentType: "application/json; charset=utf-8",
+                        success: function (data) {
+                            if (data.resultado) {
+                                tablaData.ajax.reload();
+                            } else {
+                                swal("Error", "No se pudo eliminar", "error");
+                            }
+                        },
+                            error: function (error) {
+                            console.log(error)
+                        },
+                            beforeSend: function () {
+                            },
+                        });
+                    swal("Eliminado!", "La habitación se ha eliminado", "success");
+                });
+        });
+
+        function Guardar() {
+            var request = {
+                habitacion: {
+                    Habitacion_id: $("#txtId").val(),
+                    Numero: $("#txtNumero").val(),
+                    Detalle: $("#txtDetalle").val(),
+                    PrecioS: $("#txtPrecio").val(),
+                    _categoria: { Categoria_id: $("#cboCategoria option:selected").val()} ,
+                    _piso: { Piso_id: $("#cboPiso option:selected").val() },
+                    Estado: parseInt($("#cboEstado").val()) == 1 ? true : false
+                }
+            }
+
+            jQuery.ajax({
+                url: '@Url.Action("RegistrarHabitacion", "Mantenimiento")',
+                type: "POST",
+                data: JSON.stringify(request),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+
+                    $(".modal-body").LoadingOverlay("hide");
+
+                    if (data.resultado) {
+                        tablaData.ajax.reload();
+                        $('#formModal').modal('hide');
+                    } else {
+                        swal("Error", "No se pudo guardar los cambios", "error");
+                    }
+                },
+                error: function (error) {
+                    $(".modal-body").LoadingOverlay("hide");
+                    console.log(error)
+                },
+                beforeSend: function () {
+                    $(".modal-body").LoadingOverlay("show", {
+                        imageResizeFactor: 3,
+                        text: "Cargando...",
+                        size: 14
+                    });
+                },
+            });
+        }
+    </script>
+}

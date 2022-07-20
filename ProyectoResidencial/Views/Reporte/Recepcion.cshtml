@@ -1,0 +1,74 @@
+﻿
+@{
+    ViewBag.Title = "Reporte Recepción";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<ol class="breadcrumb mb-4 mt-4">
+    <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Inicio</a></li>
+    <li class="breadcrumb-item active">Reportes Recepción</li>
+</ol>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="fas fa-chart-line"></i> Reportes Recepción
+    </div>
+    <div class="card-body">
+        @using (Html.BeginForm("ExportarRecepciones", "Reporte", FormMethod.Post))
+        {
+            <div class="row">
+                <div class="card col-md-11 mt-2 mb-2" style="margin: auto auto">
+                    <div class="col-md-12 mb-4">
+                        <div class="row g-2">
+                            <div class="col-3">
+                                <label for="cboHabitacion">Habitación:</label>
+                                <select class="form-select" id="cboHabitacion" name="idhabitacion"></select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="txtFechaInicio">Fecha entrada:</label>
+                                <input type="text" class="form-control" id="txtFechaInicio" name="fechaInicio" autocomplete="off" />
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="txtFechaSalida">Fecha salida:</label>
+                                <input type="text" class="form-control" id="txtFechaSalida" name="fechaSalida" autocomplete="off" />
+                            </div>
+
+                            <div class="col-md-3 mt-auto">
+                                <button type="submit" class="btn btn-success"><i class="fas fa-cloud-download-alt"></i> Descargar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            jQuery.ajax({
+                url: '@Url.Action("ListarHabitacion", "Gestion")' + '?idpiso=0',
+                type: "GET",
+                data: null,
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $("<option>").attr({ "value": "0" }).text("Todas").appendTo("#cboHabitacion");
+
+                    $.each(data.data, function (index, value) {
+                        $("<option>").attr({ "value": value.Habitacion_id }).text(value.Numero).appendTo("#cboHabitacion");
+                    });
+                    $("#cboHabitacion").val($("#cboHabitacion option:first").val());
+                },
+                error: function (error) {
+                    console.log(error)
+                }
+            });
+            $("input[name=fechaInicio]").datepicker({ dateFormat: 'dd/mm/yy' }).datepicker('setDate', new Date());
+            $("input[name=fechaSalida]").datepicker({ dateFormat: 'dd/mm/yy' }).datepicker('setDate', new Date());
+        })
+    </script>
+}

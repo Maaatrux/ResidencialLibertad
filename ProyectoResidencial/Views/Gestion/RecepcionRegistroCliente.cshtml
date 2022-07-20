@@ -1,0 +1,205 @@
+﻿@model ProyectoResidencial.ViewModels.vmUsuario
+
+@{
+    ViewBag.Title = "Recepción Cliente";
+    Layout = "~/Views/Shared/_Layout_Cliente.cshtml";
+}
+
+<ol class="breadcrumb mb-4 mt-4">
+    <li class="breadcrumb-item"><a href="@Url.Action("IndexCliente", "Home")">Inicio</a></li>
+    <li class="breadcrumb-item active">Registro Recepción</li>
+</ol>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="fas fa-book"></i> Registro
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="card col-md-11 mt-3 mb-3" style="margin: auto auto">
+                <h5 class="card-title font-weight-bold">Detalles de la Habitación</h5>
+                <hr class="mt-1 mb-1" />
+                <div class="col-md-12">
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <input type="hidden" value="@Html.DisplayTextFor(model => model.Habitacion.Habitacion_id)" id="txtIdHabitacion" />
+                            <label for="numero" class="form-label">Número: </label>
+                            <label class="col-form-label">@Html.DisplayTextFor(model => model.Habitacion.Numero) </label>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="detalle" class="form-label">Detalles: </label>
+                            <label class="col-form-label">@Html.DisplayTextFor(model => model.Habitacion.Detalle) </label>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="categoria" class="form-label">Categoria: </label>
+                            <label class="col-form-label">@Html.DisplayTextFor(model => model.Habitacion._categoria.Descripcion) </label>
+                        </div>
+
+                        <div class="col-md-6 mb-4">
+                            <label for="piso" class="form-label">Piso: </label>
+                            <label class="col-form-label">@Html.DisplayTextFor(model => model.Habitacion._piso.Descripcion) </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card col-md-11 mt-2 mb-2" style="margin: auto auto">
+                <h5 class="card-title font-weight-bold">Sus datos</h5>
+                <hr class="mt-1 mb-1" />
+                <div class="col-md-12">
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <label for="txtRut">Rut:</label>
+                            <input type="hidden" id="txtIdCliente" value="@Html.DisplayTextFor(model => model.Usuario.Usuario_id)" />
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="txtRut" value="@Html.DisplayTextFor(model => model.Usuario.Rut)" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="cboTipoDocumento">Tipo Documento:</label>
+                            <select class="form-select" id="cboTipoDocumento" value="@Html.DisplayTextFor(model => model.Usuario.Tipo_documento)">
+                                <option value="Carnet">Carnet</option>
+                                <option value="Carnet Extranjero">Carnet Extranjero</option>
+                                <option value="Pasaporte">Pasaporte</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="txtNombre">Nombre:</label>
+                            <input type="text" class="form-control" id="txtNombre" value="@Html.DisplayTextFor(model => model.Usuario.Nombre)" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="txtApellido">Apellido:</label>
+                            <input type="text" class="form-control" id="txtApellido" value="@Html.DisplayTextFor(model => model.Usuario.Apellido)" />
+                        </div>
+
+                        <div class="col-md-6 mb-4">
+                            <label for="txtCorreo">Correo:</label>
+                            <input type="email" class="form-control" id="txtCorreo" value="@Html.DisplayTextFor(model => model.Usuario.Correo)" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card col-md-11 mt-2 mb-2" style="margin: auto auto">
+                <h5 class="card-title font-weight-bold">Detalle Reservación</h5>
+                <hr class="mt-1 mb-1" />
+                <div class="col-md-12">
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <label for="txtRut">Fecha entrada:</label>
+                            <input type="text" class="form-control" id="txtFechaInicio" name="fechaInicio" autocomplete="off" disabled />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="cboTipoDocumento">Fecha salida:</label>
+                            <input type="text" class="form-control" id="txtFechaSalida" name="fechaSalida" autocomplete="off" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="txtPrecio">Precio:</label>
+                            <input type="text" class="form-control" id="txtPrecio" name="precio" value="@Html.DisplayTextFor(model => model.Habitacion.Precio)" disabled />
+                            <input type="hidden" class="form-control" id="txtPrecioBase" value="@Html.DisplayTextFor(model => model.Habitacion.Precio)" disabled />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label hidden="hidden" for="txtAbono">Abono:</label>
+                            <input type="hidden" class="form-control" id="txtAbono" name="abono" value="0" autocomplete="off" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="txtObservacion">Observación:</label>
+                            <textarea class="form-control" rows="4" id="txtObservacion" name="observacion" autocomplete="off"></textarea>
+                        </div>
+                    </div>
+                    <div class="d-grid gap-2 mt-2 mb-4 col-6">
+                        <button type="button" class="btn btn-primary" id="btnRegistrar">Registrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $("#txtFechaInicio").datepicker({ dateFormat: 'dd/mm/yy' }).datepicker('setDate', new Date())
+            $("#txtFechaSalida").datepicker({
+                dateFormat: 'dd/mm/yy', 'minDate': new Date(),
+                onSelect: function (dateText, inst) {
+
+                    var dateParts1 = dateText.split("/");
+                    // meses empieza desde 0, por eso restamos dataParts[1] - 1
+                    var fechafin = new Date(dateParts1[2], dateParts1[1] - 1, dateParts1[0]);
+
+                    var dateParts2 = $("#txtFechaInicio").val().split("/");
+                    // meses empieza desde 0, por eso restamos dataParts[1] - 1
+                    var fechaInicio = new Date(dateParts2[2], dateParts2[1] - 1, dateParts2[0]);
+
+                    var diaEnMils = 1000 * 60 * 60 * 24;
+                    var dias = (fechafin.getTime() - fechaInicio.getTime()) / diaEnMils;
+
+                    var preciofinal = parseInt($("#txtPrecioBase").val()) * (dias + 1)
+
+                    $("#txtPrecio").val(preciofinal);
+                }
+            }).datepicker('setDate', new Date());
+        });
+
+        $("#btnRegistrar").on("click", function () {
+            var request = {
+                recepcion: {
+                    Usuario: {
+                        Usuario_id: $("#txtIdCliente").val(), Tipo_documento: $("#cboTipoDocumento").val(), Rut: $("#txtRut").val(),
+                        Nombre: $("#txtNombre").val(), Apellido: $("#txtApellido").val(), Correo: $("#txtCorreo").val()
+                    },
+                    Habitacion: { Habitacion_id: $("#txtIdHabitacion").val() },
+                    Fecha_salidaS: $("#txtFechaSalida").val(),
+                    Precio_inicialS: $("#txtPrecio").val(),
+                    AbonoS: $("#txtAbono").val(),
+                    Precio_restanteS: parseInt($("#txtPrecio").val()) - ($("#txtAbono").val() == "" ? 0 : parseInt($("#txtAbono").val())),
+                    Observacion: $("#txtObservacion").val()
+                }
+            }
+
+            swal({
+                title: "¿Desea confirmar la recepción?",
+                text: "Escoja una opción",
+                type: "warning",
+                confirmButtonText: "Continuar",
+                cancelButtonText: "Cancelar",
+                showCancelButton: true,
+                closeOnConfirm: false,
+                showLoaderOnConfirm: true
+            }, function () {
+                setTimeout(function () {
+                    jQuery.ajax({
+                        url: '@Url.Action("RegistrarRecepcionCliente", "Gestion")',
+                        type: "POST",
+                        data: JSON.stringify(request),
+                        dataType: "json",
+                        contentType: "application/json; charset=utf-8",
+                        success: function (data) {
+                            if (data.resultado) {
+                                window.location.href = "@Url.Action("RecepcionCliente", "Gestion")";
+                            } else {
+                                swal("Lo sentimos", "No se  pudo completar el registro", "warning");
+                            }
+                        },
+                        error: function (error) {
+                            console.log(error)
+                        }
+                    });
+                }, 1000);
+            });
+        })
+    </script>
+}
+
+
+

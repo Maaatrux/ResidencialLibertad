@@ -1,0 +1,258 @@
+﻿@model ProyectoResidencial.Models.Recepcion
+@{
+    ViewBag.Title = "Venta";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<ol class="breadcrumb mb-4 mt-4">
+    <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Inicio</a></li>
+    <li class="breadcrumb-item active">Venta</li>
+</ol>
+
+<input type="hidden" value="@Html.DisplayTextFor(model => model.Recepcion_id)" id="txtIdRecepcion" />
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="fas fa-book"></i> Detalle Recepción
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="card col-md-11 mt-3 mb-3" style="margin: auto auto">
+                <input type="hidden" value="@Html.DisplayTextFor(model => model.Habitacion.Habitacion_id)" id="txtIdHabitacion" />
+                <h5 class="card-title font-weight-bold">Resumen de la Habitación</h5>
+                <hr class="mt-1 mb-1" />
+                <div class="col-md-12">
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <label for="numero" class="form-label">Número: </label>
+                            <label class="col-form-label"> @Html.DisplayTextFor(model => model.Habitacion.Numero)</label>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="detalle" class="form-label">Detalles: </label>
+                            <label class="col-form-label">@Html.DisplayTextFor(model => model.Habitacion.Detalle)</label>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="categoria" class="form-label">Categoria: </label>
+                            <label class="col-form-label">@Html.DisplayTextFor(model => model.Habitacion._categoria.Descripcion)</label>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="piso" class="form-label">Piso: </label>
+                            <label class="col-form-label">@Html.DisplayTextFor(model => model.Habitacion._piso.Descripcion)</label>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="numero" class="form-label">Cliente: </label>
+                            <label class="col-form-label">
+                                @Html.DisplayTextFor(model => model.Usuario.Nombre) @Html.DisplayTextFor(model => model.Usuario.Apellido)
+                            </label>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="detalle" class="form-label">Rut: </label>
+                            <label class="col-form-label">@Html.DisplayTextFor(model => model.Usuario.Rut)</label>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="categoria" class="form-label">Correo: </label>
+                            <label class="col-form-label">@Html.DisplayTextFor(model => model.Usuario.Correo)</label>
+                        </div>
+
+                        <div class="col-md-6 mb-4">
+                            <label for="piso" class="form-label">Fecha entrada: </label>
+                            <label class="col-form-label">@Html.DisplayTextFor(model => model.Fecha_entradaS)</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card col-md-11 mt-2 mb-2" style="margin: auto auto">
+                <h5 class="card-title font-weight-bold">Detalle de Hospedaje</h5>
+                <hr class="mt-1 mb-1" />
+                <div class="col-md-12">
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md-3">
+                            <label for="cboProducto">Producto:</label>
+                            <select class="form-select" id="cboProducto"></select>
+                        </div>
+
+                        <div class="col-md-2">
+                            <label for="txtPrecio">Precio:</label>
+                            <input type="text" class="form-control" id="txtPrecio" disabled/>
+                        </div>
+
+                        <div class="col-md-2">
+                            <label for="txtPrecioRestante">Cantidad:</label>
+                            <input type="number" class="form-control" id="txtCantidad" value="1" min="1" max="10">
+                        </div>
+
+                        <div class="col-md-2">
+                            <button id="btnAgregarProducto" class="btn btn-success btn-block" type="button">Agregar</button>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-12 mb-4">
+                            <table id="tblVenta" class="table table-hover" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th scope="col">Producto</th>
+                                        <th scope="col">Cantidad</th>
+                                        <th scope="col">Precio</th>
+                                        <th scope="col">Sub Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row justify-content-end">
+                        <div class="col-3 align-self-end">
+                            <table class="table table-sm border-dark border-right border-top border-bottom">
+                                <tr>
+                                    <td class="display responsive">Total Pagar</td>
+                                    <td><label id="tblTotalPagar" class="m-0">0</label></td>
+                                </tr>
+                            </table>
+                        </div>
+
+                    </div>
+                    <hr />
+                    <div class="row justify-content-end">
+                        <div class="col-4">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <label class="input-group-text" for="cboEstadoVenta">Estado Venta</label>
+                                </div>
+                                <select class="form-select" id="cboEstadoVenta">
+                                    <option value="Pendiente">Pendiente</option>
+                                    <option value="Cancelado">Cancelado</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <button id="btnFinalizarVenta" class="btn btn-primary btn-block" type="button">Finalizar Venta</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        var tabladata;
+        $(document).ready(function () {
+            jQuery.ajax({
+                url: '@Url.Action("ListarProducto", "Tienda")',
+                type: "GET",
+                data: null,
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $.each(data.data, function (index, value) {
+                        $("<option>").attr({ "value": value.Producto_id }).data("precio",value.Precio).text(value.Nombre).appendTo("#cboProducto");
+                    });
+                    $("#cboProducto").val($("#cboProducto option:first").val());
+                    $("#cboProducto").trigger("change");
+                },
+                error: function (error) {
+                    console.log(error)
+                }
+            });
+        });
+
+        $("#cboProducto").on("change", function (e) {
+            var precio = $("#cboProducto option:selected").data("precio");
+            $("#txtPrecio").val(parseInt(precio));
+            $("#txtCantidad").val(1);
+        })
+
+        $("#btnAgregarProducto").on("click", function (e) {
+            var existe_producto = false;
+            $('#tbventa > tbody  > tr').each(function (e) {
+                if ($("#cboProducto option:selected").val() == $(this).data("producto_id")) {
+                    existe_producto = true;
+                    return false;
+                }
+            });
+
+            if (!existe_producto) {
+                $("#tblVenta").append(
+                    $("<tr>").append(
+                        $("<td>").append(
+                            $("<button>").addClass("btn btn-outline-danger btn-sm eliminar-producto").attr({ "type": "button" }).append($("<i>").addClass("fas fa-trash"))
+                        ).attr({ "align": "center" }),
+                        $("<td>").text($("#cboProducto option:selected").text()),
+                        $("<td>").text($("#txtCantidad").val()),
+                        $("<td>").text(parseInt($("#txtPrecio").val())),
+                        $("<td>").text(parseInt(parseInt($("#txtCantidad").val()) * parseInt($("#txtPrecio").val()))),
+                    ).data("producto_id", $("#cboProducto option:selected").val())
+                )
+                calcularTotalPagar();
+            }
+        })
+
+        $(document).on("click",".eliminar-producto", function (e) {
+            $(this).parents("tr").remove();
+            calcularTotalPagar()
+        })
+
+        function calcularTotalPagar() {
+            var total = 0;
+            $('#tblVenta > tbody  > tr').each(function (e) {
+                total += parseFloat($(this).find("td:eq(4)").text());
+            });
+            $("#tblTotalPagar").text(parseInt(total));
+        }
+
+        $("#btnFinalizarVenta").on("click", function (e) {
+            var detalleventa = [];
+            $('#tblVenta > tbody  > tr').each(function (e) {
+                detalleventa.push(
+                    {
+                        _producto: { Producto_id: $(this).data("producto_id") },
+                        Cantidad : parseInt($(this).find("td:eq(2)").text()),
+                        SubTotal : parseInt($(this).find("td:eq(4)").text())
+                    }
+                )
+            });
+
+            var request = {
+                venta: {
+                    _recepcion: { Recepcion_id: $("#txtIdRecepcion").val() },
+                    Total: parseInt($("#tblTotalPagar").text()),
+                    Estado: $("#cboEstadoVenta option:selected").val(),
+                    detalles: detalleventa
+                }
+            }
+
+            jQuery.ajax({
+                url: '@Url.Action("RegistrarVenta", "Tienda")',
+                type: "POST",
+                data: JSON.stringify(request),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+
+                    if (data.resultado) {
+                        $("#tblVenta tbody tr").remove();
+                        $("#tblTotalPagar").text("0");
+                        $("#cboEstadoVenta").val($("#cboEstadoVenta option:first").val());
+                        $("#cboProducto").val($("#cboProducto option:first").val());
+                        $("#cboProducto").trigger("change");
+                        swal("Listo", "La venta fue registrada", "success");
+                    } else {
+                        swal("Lo sentimos", "No se pudo completar la venta", "warning");
+                    }
+                },
+                error: function (error) {
+                    console.log(error)
+                },
+                beforeSend: function () {
+                },
+            });
+        })
+    </script>
+}

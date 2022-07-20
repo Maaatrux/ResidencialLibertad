@@ -1,0 +1,78 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    @Styles.Render("~/Content/css")
+</head>
+<body class="bg-dark">
+    <div id="layoutAuthentication">
+        <div id="layoutAuthentication_content">
+            <main>
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-5">
+                            <div class="card shadow-lg border-0 rounded-lg mt-5">
+                                <div class="card-header"><h3 class="text-center font-weight-light my-4">Iniciar Sesión</h3></div>
+                                <div class="card-body">
+                                    <div class="row justify-content-center text-center align-items-center">
+                                        <div class="col-6">
+                                            <img src="@Url.Content("~/img/logo_residencial.png")" style="width: 80%;height: 160px;" />
+                                        </div>
+                                    </div><br />
+                                    <form action="@Url.Content("~/Login/Index")" method="post">
+                                        <div class="form-floating mb-3">
+                                            <input class="form-control" id="correo" name="correo" type="email" placeholder="Ingrese su correo" />
+                                            <label for="inputEmail">Correo Electrónico</label>
+                                        </div>
+                                        <div class="form-floating mb-3">
+                                            <input class="form-control" id="clave" name="clave" type="password" placeholder="Ingrese su clave" />
+                                            <label for="inputPassword">Contraseña</label>
+                                        </div>
+                                        <div class="form-floating mb-3">
+                                            @{if (ViewBag.Error != null)
+                                                {
+                                                    <div class="alert alert-danger" role="alert">
+                                                        @ViewBag.Error
+                                                    </div>
+                                                }
+                                            }
+                                            <div class="mt-4 mb-0">
+                                                <div class="d-grid">
+                                                    <button class="btn btn-primary btn-block" type="submit">Iniciar Sesión</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="card-footer text-center py-3">
+                                    <a class="small" href="@Url.Action("Registrar","Login")">¿Necesitas una cuenta? ¡Regístrate!</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <h1 class="mt-5"></h1>
+            </main>
+        </div>
+        <div id="layoutAuthentication_footer">
+            <footer class="py-4 bg-light mt-auto">
+                <div class="container-fluid px-4">
+                    <div class="d-flex align-items-center justify-content-between small">
+                        <div class="text-muted">Copyright &copy; Residencial Libertad 2022</div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/complementos")
+    @Scripts.Render("~/bundles/bootstrap")
+</body>
+</html>

@@ -1,0 +1,81 @@
+﻿@{
+    ViewBag.Title = "Inicio";
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Bienvenido(a)</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active">Resumen</li>
+    </ol>
+
+    <div class="row">
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-primary text-white mb-4">
+                <div class="card-body">Total Habitaciones</div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <div class="h5 mb-0 font-weight-bold text-white" id="totalHabitaciones">0</div>
+                    <div class="small text-white"><i class="fas fa-clipboard-list fa-2x text-white-50"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-success text-white mb-4">
+                <div class="card-body">Habitaciones Disponibles</div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <div class="h5 mb-0 font-weight-bold text-white" id="habitacionesDisponibles">0</div>
+                    <div class="small text-white"><i class="fas fa-box fa-2x text-white"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-danger text-white mb-4">
+                <div class="card-body">Habitaciones Ocupadas</div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <div class="h5 mb-0 font-weight-bold text-white" id="habitacionesOcupadas">0</div>
+                    <div class="small text-white"><i class="fas fa-bed fa-2x text-white"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-info text-white mb-4">
+                <div class="card-body">Habitaciones en Limpieza</div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <div class="h5 mb-0 font-weight-bold text-white" id="habitacionesLimpieza">0</div>
+                    <div class="small text-white"><i class="fas fa-air-freshener fa-2x text-white"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+
+            jQuery.ajax({
+                url: '@Url.Action("ListarHabitacion", "Gestion")' + '?idpiso=0',
+                type: "GET",
+                data: null,
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (data.data != null) {
+                        $("#totalHabitaciones").text(data.data.length)
+                        $("#habitacionesDisponibles").text(data.data.filter(h => h._estado_habitacion.Estado_habi_id == 1).length)
+                        $("#habitacionesOcupadas").text(data.data.filter(h => h._estado_habitacion.Estado_habi_id == 2).length)
+                        $("#habitacionesLimpieza").text(data.data.filter(h => h._estado_habitacion.Estado_habi_id == 3).length)
+                    }
+                },
+                error: function (error) {
+                    console.log(error)
+                },
+                beforeSend: function () {
+
+                },
+            });
+        })
+    </script>
+}

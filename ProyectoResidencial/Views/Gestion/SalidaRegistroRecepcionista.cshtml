@@ -1,0 +1,254 @@
+﻿@model ProyectoResidencial.Models.Recepcion
+@{
+    ViewBag.Title = "Salida Registro";
+    Layout = "~/Views/Shared/_Layout_Recepcionista.cshtml";
+}
+
+<ol class="breadcrumb mb-4 mt-4">
+    <li class="breadcrumb-item"><a href="@Url.Action("IndexRecepcionista", "Home")">Inicio</a></li>
+    <li class="breadcrumb-item active">Salida Registro</li>
+</ol>
+
+@{
+    int totalPagar = 0;
+
+    if (Model.Venta != null)
+    {
+        foreach (ProyectoResidencial.Models.Venta v in Model.Venta)
+        {
+            foreach (ProyectoResidencial.Models.Detalle_venta dv in v.detalles)
+            {
+                if (v.Estado == "Pendiente")
+                {
+                    totalPagar += dv.SubTotal;
+                }
+            }
+        }
+    }
+    totalPagar += Model.Precio_restante;
+}
+
+<input type="hidden" value="@Html.DisplayTextFor(model => model.Recepcion_id)" id="txtIdRecepcion" />
+<input type="hidden" value="@Html.DisplayTextFor(model => model.Habitacion.Habitacion_id)" id="txtIdHabitacion" />
+<input type="hidden" value="@totalPagar" id="txtTotal" />
+
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="fas fa-book"></i> Detalle Recepción
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="card col-md-11 mt-3 mb-3" style="margin: auto auto">
+                <h5 class="card-title font-weight-bold">Resumen de la Habitación</h5>
+                <hr class="mt-1 mb-1" />
+                <div class="col-md-12">
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <label for="numero" class="form-label">Número: </label>
+                            <label class="col-form-label"> @Html.DisplayTextFor(model => model.Habitacion.Numero)</label>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="detalle" class="form-label">Detalles: </label>
+                            <label class="col-form-label">@Html.DisplayTextFor(model => model.Habitacion.Detalle)</label>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="categoria" class="form-label">Categoria: </label>
+                            <label class="col-form-label">@Html.DisplayTextFor(model => model.Habitacion._categoria.Descripcion)</label>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="piso" class="form-label">Piso: </label>
+                            <label class="col-form-label">@Html.DisplayTextFor(model => model.Habitacion._piso.Descripcion)</label>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="numero" class="form-label">Cliente: </label>
+                            <label class="col-form-label">
+                                @Html.DisplayTextFor(model => model.Usuario.Nombre) @Html.DisplayTextFor(model => model.Usuario.Apellido)
+                            </label>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="detalle" class="form-label">Rut: </label>
+                            <label class="col-form-label">@Html.DisplayTextFor(model => model.Usuario.Rut)</label>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="categoria" class="form-label">Correo: </label>
+                            <label class="col-form-label">@Html.DisplayTextFor(model => model.Usuario.Correo)</label>
+                        </div>
+
+                        <div class="col-md-6 mb-4">
+                            <label for="piso" class="form-label">Fecha entrada: </label>
+                            <label class="col-form-label">@Html.DisplayTextFor(model => model.Fecha_entradaS)</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card col-md-11 mt-2 mb-2" style="margin: auto auto">
+                <h5 class="card-title font-weight-bold">Costo de Hospedaje</h5>
+                <hr class="mt-1 mb-1" />
+                <div class="col-md-12">
+                    <div class="row g-2">
+                        <div class="col-md-3">
+                            <label for="txtPrecio">Costo habitación:</label>
+                            <input type="text" class="form-control" id="txtPrecio" name="precio" value="@Html.DisplayTextFor(model => model.Precio_inicial)" disabled>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="txtAbono">Abonado:</label>
+                            <input type="text" class="form-control" id="txtAbono" name="abono" value="@Html.DisplayTextFor(model => model.Abono)" disabled>
+                        </div>
+
+                        <div class="col-md-2">
+                            <label for="txtPrecioRestante">Por pagar:</label>
+                            <input type="text" class="form-control" id="txtPrecioRestante" name="precioRestante" value="@Html.DisplayTextFor(model => model.Precio_restante)" disabled>
+                        </div>
+
+                        <div class="col-md-2">
+                            <label for="txtFechaSalida">Fecha salida:</label>
+                            <input type="text" class="form-control" id="txtFechaSalida" name="fechaSalida" value="@Html.DisplayTextFor(model => model.Fecha_salidaS)" disabled>
+                        </div>
+
+                        <div class="col-md-2 mb-4">
+                            <label for="txtMulta">Multa:</label>
+                            <input type="number" class="form-control" id="txtMulta" name="multa" value="0" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card col-md-11 mt-2 mb-2" style="margin: auto auto">
+                <h5 class="card-title font-weight-bold">Servicio a la Habitación</h5>
+                <hr class="mt-1 mb-1" />
+
+                <table id="tabla" class="display responsive" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Precio Unitario</th>
+                            <th>Estado Venta</th>
+                            <th>Sub Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            if (Model.Venta != null)
+                            {
+                                foreach (var venta in Model.Venta)
+                                {
+                                    foreach (var detalleventa in venta.detalles)
+                                    {
+                                        <tr>
+                                            <td>@detalleventa._producto.Nombre</td>
+                                            <td>@detalleventa.Cantidad</td>
+                                            <td>@detalleventa._producto.Precio</td>
+                                            <td>
+                                                @{
+                                                    if (venta.Estado == "Cancelado")
+                                                    {
+                                                        <span class="badge bg-success">@venta.Estado</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge bg-danger">@venta.Estado</span>
+                                                    }
+                                                }
+                                            </td>
+                                            <td>@detalleventa.SubTotal</td>
+                                        </tr>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5">
+                                        <div class="alert alert-secondary border-0" role="alert">
+                                            No se encontraron registros
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card col-md-11 mt-2 mb-2" style="margin: auto auto">
+                <div class="card-body">
+                    <div class="row justify-content-end">
+                        <div class="col-4">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <label class="input-group-text" for="txtTotalPagar">Total a Pagar</label>
+                                </div>
+                                <input type="text" class="form-control bg-white" id="txtTotalPagar" disabled="disabled" value="@totalPagar">
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <button id="btnFinalizarRecepcion" class="btn btn-primary btn-block" type="button">Finalizar Recepción</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        $("#txtMulta").keyup(function () {
+            var ct = parseInt($("#txtMulta").val() == "" ? "0" : $("#txtMulta").val() )
+            var total = parseInt($("#txtTotal").val()) + ct;
+            $("#txtTotalPagar").val(parseInt(total))
+        });
+
+        $("#btnFinalizarRecepcion").on("click", function (e) {
+            var request = {
+                recepcion: {
+                    Recepcion_id: $("#txtIdRecepcion").val(),
+                    Habitacion: { Habitacion_id: $("#txtIdHabitacion").val()},
+                    Total_pagadoS: $("#txtTotalPagar").val(),
+                    MultaS: $("#txtMulta").val() == "" ? "0" : $("#txtMulta").val(),
+                }
+            }
+
+            swal({
+                title: "¿Desea cancelar la recepción?",
+                text: "Escoja una opción",
+                type: "warning",
+                confirmButtonText: "Continuar",
+                cancelButtonText: "Cancelar",
+                showCancelButton: true,
+                closeOnConfirm: false,
+                showLoaderOnConfirm: true
+            }, function () {
+                setTimeout(function () {
+                    jQuery.ajax({
+                        url: '@Url.Action("CerrarRecepcion", "Gestion")',
+                        type: "POST",
+                        data: JSON.stringify(request),
+                        dataType: "json",
+                        contentType: "application/json; charset=utf-8",
+                        success: function (data) {
+                            if (data.resultado) {
+                                window.location.href = "@Url.Action("RecepcionRecepcionista", "Gestion")";
+                            } else {
+                                swal("Lo sentimos", "No se  pudo completar el registro", "warning");
+                            }
+                },
+                error: function (error) {
+                    console.log(error)
+                        }
+                    });
+                }, 2000);
+            });
+        })
+    </script>
+}
+
